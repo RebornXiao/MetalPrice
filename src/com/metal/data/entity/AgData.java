@@ -8,10 +8,10 @@ public class AgData {
 	private Integer  max_price ;//int(4) DEFAULT NULL,
 	private Integer  min_price ;//int(4) DEFAULT NULL,
 	private Integer  close_price ;//int(4) DEFAULT NULL,
-	private Integer  change_amount ;//int(5) DEFAULT NULL,
+	private Integer  change_amount =0;//int(5) DEFAULT NULL,
 	private String change_type;
-	private Double  change_range ;//double(10,0) DEFAULT NULL COMMENT '涨跌幅度，百分比',
-	private Integer   average_price ;//double(10,0) DEFAULT NULL COMMENT '加权平均价',
+	private Double  change_range =0d;//double(10,0) DEFAULT NULL COMMENT '涨跌幅度，百分比',
+	private Integer   average_price=0 ;//double(10,0) DEFAULT NULL COMMENT '加权平均价',
 	private Integer   turnover;// int(11) DEFAULT NULL COMMENT '成交量（公斤）手',
 	private Long  turnover_premium;// bigint(20) DEFAULT NULL COMMENT '成交额',
 	
