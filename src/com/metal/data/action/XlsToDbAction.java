@@ -21,9 +21,86 @@ public class XlsToDbAction {
 		// addData();
 		// getModel(10);
 		// getNum();
-		getPeriod();
+		// getPeriod();
 		// add5minData();
-//		add1hData();
+		// add1hData();
+
+		test(50);
+	}
+
+	private static void test(int price) {
+		List<AgData> allByDb = XlsToDbService.getAllByDb();
+		System.out.println(allByDb.size() + "数量");
+		int y = allByDb.get(allByDb.size() - 1).getClose_price();// 买入价
+		int buy = 1;// 买入份额
+		int buyMax = 0;
+		int add = 0; // 盈利
+
+		int buySize = 1;// 买入次数
+		int sailSize = 0;// 卖出次数
+		for (int size = allByDb.size(), i = size - 1; i > 0; i--) {
+			int x = allByDb.get(i).getClose_price();// 每次收盘价
+
+			/**
+			 * 情况：1.买入价在最高价和最低价之间 2.卖出价在最高价和最低价之间
+			 * 
+			 * 3.买入后， 遇到新价格。1.确定他的买入价，确定他的卖出价。
+			 */
+			int buyPriceTmp = y - price;// (补仓价)
+			int salePriceTmp = y + price;// (盈利价)
+			int minPriceTmp = allByDb.get(i).getMin_price();
+			int maxPriceTmp = allByDb.get(i).getMax_price();
+
+			System.out.println(allByDb.get(i).getTime() + " 本日最低价=" + minPriceTmp + ";" + "本日最高价=" + maxPriceTmp);
+			if (maxPriceTmp >= salePriceTmp && buy > 0) {// 上涨50点
+				// 交易，賣出
+				add = add + price * buy;// 利潤
+				System.out.println("当前均价" + y);
+				System.out.println(allByDb.get(i).getTime() + ":卖出盈利=" + price * buy);
+				buy = 0;
+				y = salePriceTmp - 200;
+				sailSize++;
+			} else if (minPriceTmp <= buyPriceTmp && buy > 0) {// 下降50点
+				// 交易,买入
+				int buyNum = 0;
+				if ((y - minPriceTmp) / price == 1) {// 下降了50点
+					int buytemp = buy;// 之前的老数量
+					buy++;
+					buyNum = 1;
+					y = (y * buytemp + (y - price)) / buy;
+					if (buy > buyMax) {
+						buyMax = buy;
+					}
+				} else {// 下降了50的倍数
+					int buytemp = buy;// 之前的老数量
+					buy = buy + (y - minPriceTmp) / price;
+					if (buy > buyMax) {
+						buyMax = buy;
+					}
+					buyNum = buy - buytemp;
+					// y = (y + y - ((y - x) / 50) * 50) * buy / 2;
+					y = (y * buytemp
+							+ (2 * y - price - ((y - minPriceTmp) / price) * price) * ((y - minPriceTmp) / price) / 2)
+							/ buy;
+				}
+				System.out.println(allByDb.get(i).getTime() + "买入" + buyNum);
+				System.out.println("当前均价" + y);
+				buySize = buySize + buyNum;
+			} else if (minPriceTmp - y <= 0 && buy == 0) {
+				buy = 1;
+				System.out.println(allByDb.get(i).getTime() + "买入" + 1);
+				System.out.println("当前均价" + y);
+				buySize++;
+			} else {// 波动不足50点
+				System.out.println(allByDb.get(i).getTime() + ":本日无操作");
+				System.out.println("当前均价" + y);
+			}
+
+		}
+		System.out.println("最终收益 ：" + add);
+		System.out.println("买次数 ：" + buySize);
+		System.out.println("卖次数 ：" + sailSize);
+		System.out.println("买最大次数 ：" + buyMax);
 	}
 
 	private static void getPeriod() {
@@ -39,25 +116,25 @@ public class XlsToDbAction {
 			for (int i = 0, size = allByDb.size(); i < size; i++) {
 				AgData agData = allByDb.get(i);
 				AgData agData2 = allByDb.get(i + 1);
-//				AgData agData3 = allByDb.get(i + 2);
-//				AgData agData4 = allByDb.get(i + 3);
-//				AgData agData5 = allByDb.get(i + 4);
-//				AgData agData6 = allByDb.get(i + 5);
-//				AgData agData7 = allByDb.get(i + 6);
-//				AgData agData8 = allByDb.get(i + 7);
-//				AgData agData9 = allByDb.get(i + 8);
-//				AgData agData10 = allByDb.get(i + 9);
+				// AgData agData3 = allByDb.get(i + 2);
+				// AgData agData4 = allByDb.get(i + 3);
+				// AgData agData5 = allByDb.get(i + 4);
+				// AgData agData6 = allByDb.get(i + 5);
+				// AgData agData7 = allByDb.get(i + 6);
+				// AgData agData8 = allByDb.get(i + 7);
+				// AgData agData9 = allByDb.get(i + 8);
+				// AgData agData10 = allByDb.get(i + 9);
 				List<AgData> agDatas = new ArrayList<>();
 				agDatas.clear();
 				agDatas.add(agData2);
-//				agDatas.add(agData3);
-//				agDatas.add(agData4);
-//				agDatas.add(agData5);
-//				agDatas.add(agData6);
-//				agDatas.add(agData7);
-//				agDatas.add(agData8);
-//				agDatas.add(agData9);
-//				agDatas.add(agData10);
+				// agDatas.add(agData3);
+				// agDatas.add(agData4);
+				// agDatas.add(agData5);
+				// agDatas.add(agData6);
+				// agDatas.add(agData7);
+				// agDatas.add(agData8);
+				// agDatas.add(agData9);
+				// agDatas.add(agData10);
 				if (agData.getChange_type().equals("+")) {
 					numAll++;
 					if (isAdd(agDatas, agData, 5)) {
@@ -243,7 +320,7 @@ public class XlsToDbAction {
 			db.AddU(sql, str);
 		}
 	}
-	
+
 	private static void addAgData() {
 		// 得到表格中所有的数据
 		// 不存在就添加
